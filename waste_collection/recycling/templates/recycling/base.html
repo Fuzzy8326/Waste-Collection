@@ -33,17 +33,13 @@
           {% if user.is_authenticated %}
           <!-- Link to collection list view -->
           <li>
-            <a href="{% url 'collection_list' %}" class="nav-link"
-              >Collections</a
-            >
+            <a href="{% url 'collection_list' %}" class="nav-link">Collections</a>
           </li>
 
           <!-- Link to create a new collection record - residents only -->
           {% if not user.is_staff %}
           <li>
-            <a href="{% url 'collection_create' %}" class="nav-link btn-primary"
-              >+ New Collection</a
-            >
+            <a href="{% url 'collection_create' %}" class="nav-link btn-primary">+ New Collection</a>
           </li>
           {% endif %}
 
@@ -75,9 +71,7 @@
           {% else %}
           <li><a href="{% url 'login' %}" class="nav-link">Log In</a></li>
           <li>
-            <a href="{% url 'signup' %}" class="nav-link btn-primary"
-              >Sign Up</a
-            >
+            <a href="{% url 'signup' %}" class="nav-link btn-primary">Sign Up</a>
           </li>
           {% endif %}
         </ul>

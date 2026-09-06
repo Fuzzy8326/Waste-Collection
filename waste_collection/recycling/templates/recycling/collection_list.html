@@ -68,22 +68,10 @@ Collection{% endblock %} {% block content %}
         </td>
 
         <td class="actions" data-label="Actions">
-          
-            href="{% url 'collection_detail' collection.pk %}"
-            class="btn btn-small btn-info"
-            >View</a
-          >
-          
-            href="{% url 'collection_update' collection.pk %}"
-            class="btn btn-small btn-warning"
-            >Edit</a
-          >
+          <a href="{% url 'collection_detail' collection.pk %}" class="btn btn-small btn-info">View</a>
+          <a href="{% url 'collection_update' collection.pk %}" class="btn btn-small btn-warning">Edit</a>
           {% if is_admin or collection.status == 'submitted' %}
-          
-            href="{% url 'collection_delete' collection.pk %}"
-            class="btn btn-small btn-danger"
-            >Delete</a
-          >
+          <a href="{% url 'collection_delete' collection.pk %}" class="btn btn-small btn-danger">Delete</a>
           {% endif %}
         </td>
       </tr>
@@ -94,9 +82,7 @@ Collection{% endblock %} {% block content %}
           class="empty-state"
         >
           No collections found.
-          <a href="{% url 'collection_create' %}"
-            >Schedule your first collection</a
-          >
+          <a href="{% url 'collection_create' %}">Schedule your first collection</a>
         </td>
       </tr>
       {% endfor %}
