@@ -1,0 +1,35 @@
+{% extends 'recycling/base.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="form-header">
+    <h2>Log In</h2>
+</div>
+
+<div class="form-card">
+    <form method="post" class="collection-form">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group full-width">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            {% if form.errors %}
+                <div class="form-group full-width">
+                    <span class="error">Invalid username or password.</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">Log In</button>
+            <a href="{% url 'signup' %}" class="btn btn-secondary btn-large">Create an Account</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

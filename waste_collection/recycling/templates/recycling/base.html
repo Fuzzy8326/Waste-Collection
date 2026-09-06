@@ -1,0 +1,115 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Page title (child templates can override this) -->
+    <title>{% block title %}Recycle Waste Collection{% endblock %}</title>
+
+    <!-- Link to your CSS file in /static/css/style.css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3" />
+  </head>
+
+  <body>
+    <!-- ----------------------------------------------------------
+         Navigation Bar
+         Contains: Site brand + navigation links
+    ----------------------------------------------------------- -->
+    <nav class="navbar">
+      <div class="container">
+        <!-- Logo and website heading -->
+        <div class="nav-brand">
+          <span class="recycle-icon">♻️</span>
+          <h1>Waste Collection System</h1>
+        </div>
+
+        <!-- Navigation links -->
+        <ul class="nav-links">
+          <!-- Link to the homepage -->
+          <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+
+          {% if user.is_authenticated %}
+          <!-- Link to collection list view -->
+          <li>
+            <a href="{% url 'collection_list' %}" class="nav-link"
+              >Collections</a
+            >
+          </li>
+
+          <!-- Link to create a new collection record - residents only -->
+          {% if not user.is_staff %}
+          <li>
+            <a href="{% url 'collection_create' %}" class="nav-link btn-primary"
+              >+ New Collection</a
+            >
+          </li>
+          {% endif %}
+
+          <!-- Role badge -->
+          <li>
+            <span
+             class="badge {% if user.is_staff %}badge-electronic{% else %}badge-plastic{% endif %}"
+            >
+              {% if user.is_staff %}Admin{% else %}Resident{% endif %}: {{ user.username }}
+            </span>
+          </li>
+
+          <li>
+            <form
+              method="post"
+              action="{% url 'logout' %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="nav-link"
+                style="background: none; border: none; cursor: pointer"
+              >
+                Log Out
+              </button>
+            </form>
+          </li>
+          {% else %}
+          <li><a href="{% url 'login' %}" class="nav-link">Log In</a></li>
+          <li>
+            <a href="{% url 'signup' %}" class="nav-link btn-primary"
+              >Sign Up</a
+            >
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ----------------------------------------------------------
+         Messages (login/signup feedback etc.)
+    ----------------------------------------------------------- -->
+    {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+      <p class="message {{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ----------------------------------------------------------
+         Main Content Section
+         Child templates insert content into this block
+    ----------------------------------------------------------- -->
+    <main class="main-content">
+      <div class="container">{% block content %} {% endblock %}</div>
+    </main>
+
+    <!-- ----------------------------------------------------------
+         Footer Section
+    ----------------------------------------------------------- -->
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2025 Recycle Waste Collection System. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

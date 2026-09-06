@@ -1,0 +1,92 @@
+{% extends "recycling/base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Edit Collection{% else %}New Collection{% endif %} - Recycle Waste Collection
+{% endblock %}
+
+{% block content %}
+<div class="form-header">
+    <h2>{% if object %}Edit Collection Request{% else %}New Collection Request{% endif %}</h2>
+</div>
+
+<div class="form-card">
+    <form method="post" class="collection-form" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <p class="error">{{ form.non_field_errors }}</p>
+        {% endif %}
+
+        <div class="form-grid">
+            {% for field in form %}
+
+                {% if field.name == 'waste_type' %}
+                    <!-- ----------------------------------------------
+                         Waste type: rendered as clickable image cards
+                         instead of a plain <select> dropdown.
+                    ----------------------------------------------- -->
+                    <div class="form-group full-width">
+                        <label>{{ field.label }}</label>
+                        <div class="waste-type-cards">
+                            {% for radio in field %}
+                                <label for="{{ radio.id_for_label }}"
+                                       class="waste-card{% if radio.data.selected %} selected{% endif %}"
+                                       data-type="{{ radio.data.value }}">
+                                    {{ radio.tag }}
+                                    <span class="waste-card-icon">
+                                       <img src="{% static 'waste/images/' %}{{ radio.data.value }}.svg"
+                                             alt="{{ radio.choice_label }}">
+                                    </span>
+                                    <span class="waste-card-label">{{ radio.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                {% else %}
+                    <div class="form-group{% if field.field.widget.input_type == 'textarea' or field.html_name == 'notes' or field.html_name == 'address' %} full-width{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.name == 'status' %}
+                            <small class="text-muted">Only admins can change the status. Residents' requests always start as "Submitted for Collection".</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                {% if object %}Save Changes{% else %}Create Request{% endif %}
+            </button>
+            <a href="{% url 'collection_list' %}" class="btn btn-secondary btn-large">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Keep the visual "selected" card in sync with the underlying radio input.
+    (function () {
+        var cards = document.querySelectorAll('.waste-card');
+        cards.forEach(function (card) {
+            var input = card.querySelector('input[type="radio"]');
+            if (!input) return;
+            if (input.checked) {
+                card.classList.add('selected');
+            }
+            input.addEventListener('change', function () {
+                cards.forEach(function (c) { c.classList.remove('selected'); });
+                card.classList.add('selected');
+            });
+        });
+    })();
+</script>
+{% endblock %}

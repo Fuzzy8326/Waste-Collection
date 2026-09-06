@@ -1,0 +1,27 @@
+{% extends "recycling/base.html" %}
+
+{% block title %}Delete Collection - Recycle Waste Collection{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-icon">🗑️</div>
+        <h2>Delete Collection Request?</h2>
+        <p>This action cannot be undone.</p>
+
+        <div class="delete-details">
+            <p><strong>Household:</strong> {{ object.household_name }}</p>
+            <p><strong>Waste Type:</strong> {{ object.get_waste_type_display }}</p>
+            <p><strong>Collection Date:</strong> {{ object.collection_date }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="delete-actions">
+                <button type="submit" class="btn btn-danger btn-large">Yes, Delete</button>
+                <a href="{% url 'collection_detail' object.pk %}" class="btn btn-secondary btn-large">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

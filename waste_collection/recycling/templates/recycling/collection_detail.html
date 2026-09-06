@@ -1,0 +1,60 @@
+{% extends "recycling/base.html" %}
+
+{% block title %}{{ collection.household_name }} - Recycle Waste Collection{% endblock %}
+
+{% block content %}
+<div class="detail-header">
+    <h2>{{ collection.household_name }}</h2>
+    <div class="detail-actions">
+    <a href="{% url 'collection_update' collection.pk %}" class="btn btn-warning">Edit</a>
+    {% if is_admin or collection.status == 'submitted' %}
+        <a href="{% url 'collection_delete' collection.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    <a href="{% url 'collection_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-header-section">
+        <span class="badge badge-large badge-{{ collection.waste_type }}">{{ collection.get_waste_type_display }}</span>
+        <span class="status status-large status-{{ collection.status }}">{{ collection.get_status_display }}</span>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <label>Address</label>
+            <p>{{ collection.address }}</p>
+        </div>
+        <div class="detail-item">
+            <label>Phone</label>
+            <p>{{ collection.phone }}</p>
+        </div>
+        <div class="detail-item">
+            <label>Weight (kg)</label>
+            <p>{{ collection.weight_kg }}</p>
+        </div>
+        <div class="detail-item">
+            <label>Collection Date</label>
+            <p>{{ collection.collection_date }}</p>
+        </div>
+        {% if is_admin %}
+        <div class="detail-item">
+            <label>Requested By</label>
+            <p>{{ collection.requested_by|default:"—" }}</p>
+        </div>
+        {% endif %}
+        <div class="detail-item full-width">
+            <label>Notes</label>
+            <p{% if not collection.notes %} class="text-muted"{% endif %}>{{ collection.notes|default:"No notes provided." }}</p>
+        </div>
+        <div class="detail-item">
+            <label>Created</label>
+            <p class="text-muted">{{ collection.created_at }}</p>
+        </div>
+        <div class="detail-item">
+            <label>Last Updated</label>
+            <p class="text-muted">{{ collection.updated_at }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends "recycling/base.html" %} {% load static %} {% block title %}Home -
+Recycle Waste Collection{% endblock %} {% block content %}
+
+<!-- ---------------------------------------------------------
+     Hero section
+--------------------------------------------------------- -->
+<section class="hero">
+  <div class="hero-watermark">♻️</div>
+  <div class="hero-content">
+    <span class="hero-badge">Simple &middot; Fast &middot; Sustainable</span>
+    <h2>Recycle Smarter, Not Harder</h2>
+    <p>
+      Schedule a waste collection in minutes and track it every step of the way
+      — from submission to completion.
+    </p>
+    <div class="cta-buttons">
+      {% if user.is_authenticated %} {% if not is_admin %}
+      <a href="{% url 'collection_create' %}" class="btn btn-primary btn-large"
+        >+ Schedule Collection</a
+      >
+      {% endif %}
+      <a href="{% url 'collection_list' %}" class="btn btn-secondary btn-large"
+        >View My Collections</a
+      >
+      {% else %}
+      <a href="{% url 'signup' %}" class="btn btn-primary btn-large"
+        >Get Started</a
+      >
+      <a href="{% url 'login' %}" class="btn btn-secondary btn-large">Log In</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if user.is_authenticated %}
+<!-- ---------------------------------------------------------
+     Quick-glance dashboard for logged-in users
+--------------------------------------------------------- -->
+<div class="page-header">
+  <h2>
+    {% if is_admin %}Overview — All Collections{% else %}Your Collections at a
+    Glance{% endif %}
+  </h2>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <h3>Total</h3>
+    <p class="stat-number">{{ total_count }}</p>
+  </div>
+  <div class="stat-card">
+    <h3>Submitted</h3>
+    <p class="stat-number">{{ submitted_count }}</p>
+  </div>
+  <div class="stat-card">
+    <h3>Pending Pickup</h3>
+    <p class="stat-number">{{ pending_count }}</p>
+  </div>
+  <div class="stat-card">
+    <h3>Collected</h3>
+    <p class="stat-number">{{ collected_count }}</p>
+  </div>
+  <div class="stat-card">
+    <h3>Completed</h3>
+    <p class="stat-number">{{ completed_count }}</p>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Household</th>
+        <th>Waste Type</th>
+        <th>Collection Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for collection in recent_collections %}
+      <tr>
+        <td><strong>{{ collection.household_name }}</strong></td>
+        <td>
+          <span class="badge badge-{{ collection.waste_type }}">
+            {{ collection.get_waste_type_display }}
+          </span>
+        </td>
+        <td>{{ collection.collection_date|date:"M d, Y" }}</td>
+        <td>
+          <span class="status status-{{ collection.status }}">
+            {{ collection.get_status_display }}
+          </span>
+        </td>
+        <td class="actions">
+          <a
+            href="{% url 'collection_detail' collection.pk %}"
+            class="btn btn-small btn-info"
+            >View</a
+          >
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="empty-state">
+          No collections yet.
+          <a href="{% url 'collection_create' %}"
+            >Schedule your first collection</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<!-- ---------------------------------------------------------
+     "How it works" section for visitors
+--------------------------------------------------------- -->
+<div class="section-intro">
+  <h2>How It Works</h2>
+  <p>
+    Every request moves through four clear stages, so you always know where
+    things stand.
+  </p>
+</div>
+
+<div class="steps-grid">
+  <div class="step-card">
+    <div class="step-icon step-icon-1">1</div>
+    <h3>Submit a Request</h3>
+    <p>
+      Tell us what type of waste you have, how much, and when you'd like it
+      picked up. Your request is instantly marked
+      <strong>Submitted for Collection</strong>.
+    </p>
+  </div>
+  <div class="step-card">
+    <div class="step-icon step-icon-2">2</div>
+    <h3>Pickup Accepted</h3>
+    <p>
+      Once our team accepts your request, it moves to
+      <strong>Pending Pickup</strong> — collection is on the way.
+    </p>
+  </div>
+  <div class="step-card">
+    <div class="step-icon step-icon-3">3</div>
+    <h3>Collected</h3>
+    <p>
+      When your waste is physically picked up, we mark it
+      <strong>Collected</strong>.
+    </p>
+  </div>
+  <div class="step-card">
+    <div class="step-icon step-icon-4">4</div>
+    <h3>Completed</h3>
+    <p>
+      Once your items are fully processed and recycled, the request is marked
+      <strong>Completed</strong>.
+    </p>
+  </div>
+</div>
+
+<div class="section-intro">
+  <h2>Sort By Type</h2>
+  <p>We collect and recycle six categories of household waste.</p>
+</div>
+
+<div class="waste-type-cards waste-type-showcase">
+  {% for type_value, type_label in waste_types %}
+  <div class="waste-card" data-type="{{ type_value }}">
+    <span class="waste-card-icon"
+      ><img
+        src="{% static 'waste/images/' %}{{ type_value }}.svg"
+        alt="{{ type_label }}"
+    /></span>
+    <span class="waste-card-label">{{ type_label }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<section class="closing-cta">
+  <h2>Ready to clear some space?</h2>
+  <p>Create a free account and schedule your first pickup in under a minute.</p>
+  <a href="{% url 'signup' %}" class="btn btn-primary btn-large"
+    >Sign Up Free</a
+  >
+</section>
+{% endif %} {% endblock %}

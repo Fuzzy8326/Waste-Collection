@@ -1,0 +1,107 @@
+{% extends 'recycling/base.html' %} {% block title %}All Collections - Waste
+Collection{% endblock %} {% block content %}
+
+<div class="page-header">
+    <h2>{% if is_admin %}All Waste Collections{% else %}My Waste Collections{% endif %}</h2>
+    {% if not is_admin %}
+        <a href="{% url 'collection_create' %}" class="btn btn-primary">+ Schedule Collection</a>
+    {% endif %}
+</div>
+
+{% if is_admin %}
+<form method="post" action="{% url 'archive_completed' %}" style="display:flex; gap:8px; align-items:center; margin-bottom:1rem;">
+    {% csrf_token %}
+    <label for="archive-month" class="text-muted">Archive completed for month:</label>
+    <input type="month" id="archive-month" name="month" required>
+    <button type="submit" class="btn btn-secondary btn-small">Archive Completed</button>
+</form>
+{% endif %}
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <h3>Total Collections</h3>
+    <p class="stat-number">{{ collections|length }}</p>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Household</th>
+        {% if is_admin %}
+        <th>Requested By</th>
+        {% endif %}
+        <th>Address</th>
+        <th>Waste Type</th>
+        <th>Weight (kg)</th>
+        <th>Collection Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for collection in collections %}
+      <tr>
+        <td><strong>{{ collection.household_name }}</strong></td>
+
+        {% if is_admin %}
+        <td>{{ collection.requested_by.username|default:"—" }}</td>
+        {% endif %}
+
+        <td>{{ collection.address|truncatewords:5 }}</td>
+
+        <td>
+          <span class="badge badge-{{ collection.waste_type }}">
+            {{ collection.get_waste_type_display }}
+          </span>
+        </td>
+
+        <td>{{ collection.weight_kg }} kg</td>
+
+        <td>{{ collection.collection_date|date:"M d, Y" }}</td>
+
+        <td>
+          <span class="status status-{{ collection.status }}">
+            {{ collection.get_status_display }}
+          </span>
+        </td>
+
+        <td class="actions">
+          <a
+            href="{% url 'collection_detail' collection.pk %}"
+            class="btn btn-small btn-info"
+            >View</a
+          >
+          <a
+            href="{% url 'collection_update' collection.pk %}"
+            class="btn btn-small btn-warning"
+            >Edit</a
+          >
+          {% if is_admin or collection.status == 'submitted' %}
+          <a
+            href="{% url 'collection_delete' collection.pk %}"
+            class="btn btn-small btn-danger"
+            >Delete</a
+          >
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td
+          colspan="{% if is_admin %}8{% else %}7{% endif %}"
+          class="empty-state"
+        >
+          No collections found.
+          <a href="{% url 'collection_create' %}"
+            >Schedule your first collection</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
