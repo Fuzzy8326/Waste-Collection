@@ -80,20 +80,20 @@ Recycle Waste Collection{% endblock %} {% block content %}
     <tbody>
       {% for collection in recent_collections %}
       <tr>
-        <td><strong>{{ collection.household_name }}</strong></td>
-        <td>
+        <td data-label="Household"><strong>{{ collection.household_name }}</strong></td>
+        <td data-label="Waste Type">
           <span class="badge badge-{{ collection.waste_type }}">
             {{ collection.get_waste_type_display }}
           </span>
         </td>
-        <td>{{ collection.collection_date|date:"M d, Y" }}</td>
-        <td>
+        <td data-label="Collection Date">{{ collection.collection_date|date:"M d, Y" }}</td>
+        <td data-label="Status">
           <span class="status status-{{ collection.status }}">
             {{ collection.get_status_display }}
           </span>
         </td>
-        <td class="actions">
-          <a
+        <td class="actions" data-label="Actions">
+          
             href="{% url 'collection_detail' collection.pk %}"
             class="btn btn-small btn-info"
             >View</a

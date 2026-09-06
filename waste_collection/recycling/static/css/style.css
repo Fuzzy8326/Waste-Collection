@@ -7,6 +7,12 @@
     box-sizing: border-box;
 }
 
+html {
+    /* Prevents iOS Safari from auto-zooming when tapping into inputs
+       (it does this whenever a focused input has font-size < 16px) */
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -15,6 +21,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden; /* stop accidental horizontal scroll from wide children */
 }
 
 /* Container */
@@ -22,6 +29,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Navigation */
@@ -36,6 +44,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .nav-brand {
@@ -58,6 +68,7 @@ body {
     list-style: none;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .nav-link {
@@ -66,6 +77,9 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 5px;
     transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px; /* touch target */
 }
 
 .nav-link:hover {
@@ -94,6 +108,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .page-header h2 {
@@ -136,6 +152,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     overflow: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
@@ -259,7 +276,9 @@ body {
 
 /* Buttons */
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 5px;
@@ -269,6 +288,7 @@ body {
     font-weight: 600;
     transition: all 0.3s;
     text-align: center;
+    min-height: 40px; /* comfortable touch target */
 }
 
 .btn-large {
@@ -279,6 +299,7 @@ body {
 .btn-small {
     padding: 0.35rem 0.75rem;
     font-size: 0.85rem;
+    min-height: 36px;
 }
 
 .btn-primary {
@@ -346,6 +367,7 @@ body {
 .detail-actions {
     display: flex;
     gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .detail-card {
@@ -362,6 +384,8 @@ body {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid #ecf0f1;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .detail-header-section h2 {
@@ -395,6 +419,7 @@ body {
 .detail-item p {
     font-size: 1.1rem;
     color: #2c3e50;
+    word-break: break-word;
 }
 
 .text-muted {
@@ -408,6 +433,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .form-header h2 {
@@ -454,9 +481,11 @@ body {
     padding: 0.75rem;
     border: 2px solid #ecf0f1;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 1rem; /* keep >=16px so iOS Safari doesn't zoom on focus */
     transition: border-color 0.3s;
     font-family: inherit;
+    min-height: 44px; /* touch target */
+    width: 100%;
 }
 
 .form-group input:focus,
@@ -481,6 +510,7 @@ body {
     display: flex;
     gap: 1rem;
     margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
 /* ============================================================
@@ -509,6 +539,7 @@ body {
     cursor: pointer;
     text-align: center;
     transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    min-height: 44px; /* touch target */
 }
 
 .waste-card input[type="radio"] {
@@ -776,6 +807,7 @@ body {
 .delete-details p {
     margin-bottom: 0.5rem;
     color: #2c3e50;
+    word-break: break-word;
 }
 
 .delete-actions {
@@ -783,6 +815,16 @@ body {
     gap: 1rem;
     justify-content: center;
     margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Archive-by-month form on the collection list page */
+.archive-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 /* Footer */
@@ -798,11 +840,29 @@ body {
     margin: 0;
 }
 
-/* Responsive Design */
+/* ============================================================
+   Responsive Design
+   Two breakpoints: tablets/small laptops (<=768px) and
+   phones (<=480px). Mobile-first touch targets (min 44px) are
+   set on interactive elements above; these queries handle
+   layout stacking, sizing, and the table -> card conversion.
+============================================================= */
+
+/* Tablet and below */
 @media (max-width: 768px) {
     .navbar .container {
         flex-direction: column;
         gap: 1rem;
+        align-items: stretch;
+    }
+
+    .nav-brand {
+        justify-content: center;
+    }
+
+    .nav-links {
+        justify-content: center;
+        width: 100%;
     }
 
     .page-header {
@@ -811,12 +871,13 @@ body {
         gap: 1rem;
     }
 
-    .table-container {
-        overflow-x: auto;
+    .page-header .btn {
+        width: 100%;
     }
 
-    .data-table {
-        min-width: 800px;
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
     }
 
     .form-grid {
@@ -827,18 +888,37 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .detail-header {
+    .detail-header,
+    .form-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
 
-    .detail-actions {
+    .detail-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .detail-actions,
+    .form-header .btn {
         width: 100%;
+    }
+
+    .detail-actions .btn {
+        flex: 1;
     }
 
     .delete-card {
         padding: 2rem 1rem;
+    }
+
+    .delete-actions {
+        flex-direction: column;
+    }
+
+    .delete-actions .btn {
+        width: 100%;
     }
 
     .form-actions {
@@ -857,7 +937,205 @@ body {
         font-size: 1.8rem;
     }
 
+    .cta-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+    }
+
     .waste-type-cards {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+
+    /* --- Responsive table: collapse the standard table into
+       stacked "cards", one per row, using the column headers
+       (data-label) as inline labels. Add data-label="..." to
+       each <td> in the template matching its <th> text. --- */
+    .table-container {
+        overflow: visible;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .data-table {
+        min-width: 0;
+        border-collapse: separate;
+        border-spacing: 0 1rem;
+    }
+
+    .data-table thead {
+        display: none;
+    }
+
+    .data-table tbody tr {
+        display: block;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        padding: 0.5rem 1rem;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: white;
+    }
+
+    .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #ecf0f1;
+        text-align: right;
+    }
+
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        text-align: left;
+        margin-right: auto;
+    }
+
+    .data-table td.actions {
+        justify-content: flex-start;
+    }
+
+    .data-table td.actions::before {
+        display: none;
+    }
+
+    .actions {
+        width: 100%;
+    }
+
+    .archive-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .archive-form input,
+    .archive-form button {
+        width: 100%;
+    }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 14px;
+    }
+
+    .nav-brand h1 {
+        font-size: 1.25rem;
+    }
+
+    .recycle-icon {
+        font-size: 1.6rem;
+    }
+
+    .nav-links {
+        gap: 0.5rem;
+    }
+
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .page-header h2,
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .detail-card,
+    .form-card {
+        padding: 1.25rem;
+    }
+
+    .detail-header-section h2 {
+        font-size: 1.4rem;
+    }
+
+    .hero {
+        padding: 2rem 1rem;
+        border-radius: 12px;
+    }
+
+    .hero-watermark {
+        font-size: 6rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .section-intro h2 {
+        font-size: 1.5rem;
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .waste-type-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .waste-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .waste-card-icon img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .closing-cta {
+        padding: 2rem 1.25rem;
+    }
+
+    .delete-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .delete-icon {
+        font-size: 3rem;
+    }
+
+    .btn-large {
+        width: 100%;
+        padding: 0.75rem 1rem;
     }
 }

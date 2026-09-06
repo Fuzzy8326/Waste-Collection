@@ -9,7 +9,7 @@ Collection{% endblock %} {% block content %}
 </div>
 
 {% if is_admin %}
-<form method="post" action="{% url 'archive_completed' %}" style="display:flex; gap:8px; align-items:center; margin-bottom:1rem;">
+<form method="post" action="{% url 'archive_completed' %}" class="archive-form">
     {% csrf_token %}
     <label for="archive-month" class="text-muted">Archive completed for month:</label>
     <input type="month" id="archive-month" name="month" required>
@@ -43,43 +43,43 @@ Collection{% endblock %} {% block content %}
     <tbody>
       {% for collection in collections %}
       <tr>
-        <td><strong>{{ collection.household_name }}</strong></td>
+        <td data-label="Household"><strong>{{ collection.household_name }}</strong></td>
 
         {% if is_admin %}
-        <td>{{ collection.requested_by.username|default:"—" }}</td>
+        <td data-label="Requested By">{{ collection.requested_by.username|default:"—" }}</td>
         {% endif %}
 
-        <td>{{ collection.address|truncatewords:5 }}</td>
+        <td data-label="Address">{{ collection.address|truncatewords:5 }}</td>
 
-        <td>
+        <td data-label="Waste Type">
           <span class="badge badge-{{ collection.waste_type }}">
             {{ collection.get_waste_type_display }}
           </span>
         </td>
 
-        <td>{{ collection.weight_kg }} kg</td>
+        <td data-label="Weight (kg)">{{ collection.weight_kg }} kg</td>
 
-        <td>{{ collection.collection_date|date:"M d, Y" }}</td>
+        <td data-label="Collection Date">{{ collection.collection_date|date:"M d, Y" }}</td>
 
-        <td>
+        <td data-label="Status">
           <span class="status status-{{ collection.status }}">
             {{ collection.get_status_display }}
           </span>
         </td>
 
-        <td class="actions">
-          <a
+        <td class="actions" data-label="Actions">
+          
             href="{% url 'collection_detail' collection.pk %}"
             class="btn btn-small btn-info"
             >View</a
           >
-          <a
+          
             href="{% url 'collection_update' collection.pk %}"
             class="btn btn-small btn-warning"
             >Edit</a
           >
           {% if is_admin or collection.status == 'submitted' %}
-          <a
+          
             href="{% url 'collection_delete' collection.pk %}"
             class="btn btn-small btn-danger"
             >Delete</a
